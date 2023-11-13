@@ -41,7 +41,7 @@ const formSchema = yup
   })
   .required();
 
-const ProcessesForm = ({ processes }) => {
+const ProcessesForm = ({ processes, onSubmit }) => {
   const {
     register,
     control,
@@ -50,8 +50,6 @@ const ProcessesForm = ({ processes }) => {
   } = useForm({
     resolver: yupResolver(formSchema),
   });
-
-  const onSubmit = (data) => console.log(data);
 
   return (
     <RootStyle component="form" noValidate autoComplete="off">
