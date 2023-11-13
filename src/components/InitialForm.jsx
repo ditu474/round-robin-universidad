@@ -5,7 +5,6 @@ import { Box, Button, TextField, styled } from "@mui/material";
 
 const RootStyle = styled(Box)(({ theme }) => ({
   display: "flex",
-  height: "100%",
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
@@ -21,7 +20,7 @@ const formSchema = yup
   })
   .required();
 
-const InitialForm = () => {
+const InitialForm = ({ onSubmit }) => {
   const {
     register,
     handleSubmit,
@@ -29,8 +28,6 @@ const InitialForm = () => {
   } = useForm({
     resolver: yupResolver(formSchema),
   });
-
-  const onSubmit = (data) => console.log(data);
 
   return (
     <RootStyle component="form" noValidate autoComplete="off">
@@ -40,6 +37,7 @@ const InitialForm = () => {
         placeholder="Tiempo del quantum en segundos"
         error={!!errors.quantumTime}
         helperText={errors.quantumTime?.message}
+        size="small"
         {...register("quantumTime")}
       />
       <TextField
@@ -48,6 +46,7 @@ const InitialForm = () => {
         placeholder="Tiempo de intercambio en segundos"
         error={!!errors.exchangeTime}
         helperText={errors.exchangeTime?.message}
+        size="small"
         {...register("exchangeTime")}
       />
       <TextField
@@ -56,6 +55,7 @@ const InitialForm = () => {
         placeholder="Cantidad de procesos"
         error={!!errors.processesNumber}
         helperText={errors.processesNumber?.message}
+        size="small"
         {...register("processesNumber")}
       />
       <Button variant="contained" onClick={handleSubmit(onSubmit)}>
