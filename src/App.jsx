@@ -4,6 +4,7 @@ import { useState } from "react";
 import useRRData from "./hooks/useRRData";
 import InitialForm from "./components/InitialForm";
 import ProcessesForm from "./components/ProcessesForm";
+import RoundRobin from "./components/RoundRobin";
 
 const RootStyle = styled(Box)({
   height: "100%",
@@ -43,7 +44,7 @@ const App = () => {
           onSubmit={handleProcessesFormSubmit}
         />
       )}
-      {appStarted && <div>Hola</div>}
+      {appStarted && <RoundRobin />}
     </RootStyle>
   );
 };
