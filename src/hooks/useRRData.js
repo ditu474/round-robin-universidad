@@ -73,7 +73,7 @@ const useRRData = create(
             startTime: state.currentSecond,
             endTime: state.currentSecond + state.exchangeTime,
             name: "I",
-            quantums: Math.floor(state.exchangeTime / state.quantumTime),
+            quantums: (state.exchangeTime / state.quantumTime).toFixed(1),
             isExchangeTime: true,
           });
 
