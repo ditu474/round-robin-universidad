@@ -16,25 +16,25 @@ const BoxParentStyle = styled(Box)(({ theme }) => ({
   margin: theme.spacing(1),
 }));
 
-const BoxStyle = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "unqueue",
-})(({ theme, unqueue }) => ({
-  border: "1px solid",
-  borderColor: unqueue ? "red" : "black",
+const BoxStyle = styled(Box)(({ theme }) => ({
+  border: "1px solid black",
   padding: theme.spacing(1),
 }));
 
 const ReadyQueue = () => {
-  const readyQueue = useRRData((state) => state.readyQueue);
+  const ganttList = useRRData((state) => state.ganttList);
 
   return (
     <Box>
-      <Typography variant="h6">Cola de listos</Typography>
+      <Typography variant="h6">Diagrama de Gantt</Typography>
       <RootStyle>
-        {readyQueue.map((process) => (
+        {ganttList.map((process) => (
           <BoxParentStyle key={process.key}>
-            <BoxStyle unqueue={process.unqueue}>{process.name}</BoxStyle>
-            {process.quantumLeft}
+            <Typography variant="caption">
+              {process.startTime} - {process.endTime}
+            </Typography>
+            <BoxStyle>{process.name}</BoxStyle>
+            {process.quantums}
           </BoxParentStyle>
         ))}
       </RootStyle>

@@ -29,7 +29,7 @@ const App = () => {
   };
 
   const handleProcessesFormSubmit = (data) => {
-    actions.addProcesses(data);
+    actions.addProcesses(data.processes);
     setAppStarted(true);
   };
 

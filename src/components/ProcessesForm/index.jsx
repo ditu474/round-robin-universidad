@@ -18,7 +18,7 @@ const formSchema = yup
   .object({
     processes: yup.lazy((value) => {
       const validationObject = {
-        startTime: yup.number().positive().integer().required(),
+        startTime: yup.number().min(0).integer().required(),
         processTime: yup.number().positive().integer().required(),
         ioInfo: yup.array().of(
           yup.object({
