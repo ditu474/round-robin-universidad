@@ -6,6 +6,7 @@ const RootStyle = styled(Box)({
   display: "flex",
   alignItems: "center",
   justifyContent: "flex-start",
+  flexWrap: "wrap",
 });
 
 const BoxParentStyle = styled(Box)(({ theme }) => ({

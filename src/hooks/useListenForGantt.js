@@ -11,27 +11,31 @@ const useListenForGantt = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const lastProcessInCpu = ganttList.pop();
-      const nextProcessInCpu = readyQueue.find((process) => !process.unqueue);
-
+      const lastProcessInCpu = ganttList.findLast((e) => e);
       if (
         lastProcessInCpu &&
         !lastProcessInCpu.isSleepTime &&
         !lastProcessInCpu.isExchangeTime
       ) {
-        actions.unqueueProcess(lastProcessInCpu);
         actions.addExchangeProcess();
 
         const nextQuantumLeft = lastProcessInCpu.quantumLeft - 1;
         if (nextQuantumLeft > 0) {
-          actions.addProcessReady(lastProcessInCpu.name, nextQuantumLeft);
+          actions.addProcessReady({
+            name: lastProcessInCpu.name,
+            quantumLeft: nextQuantumLeft,
+          });
         } else {
           // TODO: Agregar a la cola de IO si tiene procesos de IO
         }
+
+        return;
       }
 
+      const nextProcessInCpu = readyQueue.find((process) => !process.unqueue);
       if (nextProcessInCpu) {
         actions.addProcessGantt(nextProcessInCpu);
+        actions.unqueueProcess(nextProcessInCpu.key);
       } else {
         actions.addSleepProcess();
       }
@@ -40,8 +44,7 @@ const useListenForGantt = () => {
     return () => {
       clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSecond]);
+  }, [currentSecond, readyQueue, ganttList, actions]);
 };
 
 export default useListenForGantt;

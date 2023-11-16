@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 import { v4 } from "uuid";
 
 const initialData = {
@@ -11,84 +12,88 @@ const initialData = {
   ganttList: [],
 };
 
-const useRRData = create((set) => ({
-  ...initialData,
-  actions: {
-    addProcesses: (newProcesses) => set({ processes: newProcesses }),
-    setQuantumTime: (newQuantumTime) => set({ quantumTime: newQuantumTime }),
-    setExchangeTime: (newExchangeTime) =>
-      set({ exchangeTime: newExchangeTime }),
-    updateProcess: (processName, newData) =>
-      set((state) => ({
-        processes: {
-          ...state.processes,
-          [processName]: { ...newData },
-        },
-      })),
-    addProcessReady: (processName, processTime) =>
-      set((state) => ({
-        readyQueue: [
-          ...state.readyQueue,
-          {
+const useRRData = create(
+  immer((set) => ({
+    ...initialData,
+    actions: {
+      addProcesses: (newProcesses) => set({ processes: newProcesses }),
+      setQuantumTime: (newQuantumTime) => set({ quantumTime: newQuantumTime }),
+      setExchangeTime: (newExchangeTime) =>
+        set({ exchangeTime: newExchangeTime }),
+      checkInitialProcesses: () =>
+        set((state) => {
+          Object.keys(state.processes).forEach((name) => {
+            if (state.processes[name].started) return;
+
+            const startTime = state.processes[name].startTime;
+            if (startTime > state.currentSecond) return;
+
+            state.readyQueue.push({
+              key: v4(),
+              name,
+              unqueue: false,
+              quantumLeft: state.processes[name].processTime,
+            });
+            state.processes[name].started = true;
+          });
+        }),
+      addProcessReady: (process) =>
+        set((state) => {
+          state.readyQueue.push({
             key: v4(),
-            name: processName,
+            name: process.name,
             unqueue: false,
-            quantumLeft: processTime,
-          },
-        ],
-      })),
-    addProcessGantt: (process) =>
-      set((state) => ({
-        ganttList: [
-          ...state.ganttList,
-          {
+            quantumLeft: process.quantumLeft,
+          });
+        }),
+      addProcessGantt: (process) =>
+        set((state) => {
+          state.ganttList.push({
             key: process.key,
             startTime: state.currentSecond,
             endTime: state.currentSecond + state.quantumTime,
             name: process.name,
             quantums: 1,
-          },
-        ],
-        currentSecond: state.currentSecond + state.quantumTime,
-      })),
-    unqueueProcess: (processKey) => {
-      set((state) => ({
-        readyQueue: state.readyQueue.map((process) =>
-          process.key === processKey ? { ...process, unqueue: true } : process
-        ),
-      }));
-    },
-    addExchangeProcess: () =>
-      set((state) => ({
-        ganttList: [
-          ...state.ganttList,
-          {
+            quantumLeft: process.quantumLeft,
+          });
+
+          state.currentSecond += state.quantumTime;
+        }),
+      unqueueProcess: (processKey) => {
+        set((state) => {
+          state.readyQueue = state.readyQueue.map((process) =>
+            process.key === processKey ? { ...process, unqueue: true } : process
+          );
+        });
+      },
+      addExchangeProcess: () =>
+        set((state) => {
+          state.ganttList.push({
             key: `exchangeTime-${state.currentSecond}`,
             startTime: state.currentSecond,
             endTime: state.currentSecond + state.exchangeTime,
             name: "I",
             quantums: Math.floor(state.exchangeTime / state.quantumTime),
             isExchangeTime: true,
-          },
-        ],
-        currentSecond: state.currentSecond + state.exchangeTime,
-      })),
-    addSleepProcess: () =>
-      set((state) => ({
-        ganttList: [
-          ...state.ganttList,
-          {
+          });
+
+          state.currentSecond += state.exchangeTime;
+        }),
+      addSleepProcess: () =>
+        set((state) => {
+          state.ganttList.push({
             key: `sleepTime-${state.currentSecond}`,
             startTime: state.currentSecond,
             endTime: state.currentSecond + state.quantumTime,
             name: "S",
             quantums: 1,
             isSleepTime: true,
-          },
-        ],
-        currentSecond: state.currentSecond + state.quantumTime,
-      })),
-  },
-}));
+          });
+
+          state.currentSecond += state.quantumTime;
+        }),
+    },
+  }))
+);
 
 export default useRRData;
