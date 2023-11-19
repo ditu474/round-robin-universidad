@@ -18,7 +18,7 @@ const TimesDisplay = () => {
       const newTime = {
         processName,
         arrivalTime: processes[processName].startTime,
-        startTime: ganttList.findLast((p) => p.name === processName).startTime,
+        startTime: ganttList.find((p) => p.name === processName).startTime,
         finalTime: ganttList.findLast((p) => p.name === processName).endTime,
         ioTotal:
           ioQueue.reduce((acc, curr) => {

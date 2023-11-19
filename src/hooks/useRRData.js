@@ -144,11 +144,14 @@ const useRRData = create(
           const activeReadyProcess = state.readyQueue.filter(
             (process) => !process.unqueue
           ).length;
+          const isSleepTimeLastProcess =
+            state.ganttList[state.ganttList.length - 1]?.isSleepTime;
 
           state.end =
             totalProcesses === endedProcess &&
             !activeIOProcess &&
-            !activeReadyProcess;
+            !activeReadyProcess &&
+            isSleepTimeLastProcess;
         }),
     },
   }))
