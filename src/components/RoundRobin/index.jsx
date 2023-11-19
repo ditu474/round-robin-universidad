@@ -6,6 +6,7 @@ import GanttList from "./GanttList";
 import useRRData from "../../hooks/useRRData";
 import useListenForGantt from "../../hooks/useListenForGantt";
 import IOQueue from "./IOQueue";
+import TimesDisplay from "./timesDisplay";
 
 const RoundRobin = () => {
   useListenForGantt();
@@ -44,6 +45,7 @@ const RoundRobin = () => {
       <ReadyQueue />
       <IOQueue />
       <GanttList />
+      <TimesDisplay />
     </Box>
   );
 };
