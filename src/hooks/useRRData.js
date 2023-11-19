@@ -138,8 +138,17 @@ const useRRData = create(
           const endedProcess = Object.keys(state.processes).filter(
             (name) => state.processes[name].end
           ).length;
+          const activeIOProcess = state.ioQueue.filter(
+            (process) => !process.unqueue
+          ).length;
+          const activeReadyProcess = state.readyQueue.filter(
+            (process) => !process.unqueue
+          ).length;
 
-          state.end = totalProcesses === endedProcess;
+          state.end =
+            totalProcesses === endedProcess &&
+            !activeIOProcess &&
+            !activeReadyProcess;
         }),
     },
   }))
