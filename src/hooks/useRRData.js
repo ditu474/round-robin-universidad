@@ -100,7 +100,7 @@ const useRRData = create(
 
           state.ioQueue.push({
             key: v4(),
-            name: process.name,
+            name: processName,
             unqueue: false,
             ioTime: nextIO.ioTime,
             cpuTime: nextIO.cpuTime,
