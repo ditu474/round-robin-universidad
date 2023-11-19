@@ -92,6 +92,44 @@ const useRRData = create(
 
           state.currentSecond += state.quantumTime;
         }),
+      addIOProcess: (processName) =>
+        set((state) => {
+          const process = state.processes[processName];
+          const nextIO = process.ioInfo.shift();
+          if (!nextIO) return;
+
+          state.ioQueue.push({
+            key: v4(),
+            name: process.name,
+            unqueue: false,
+            ioTime: nextIO.ioTime,
+            cpuTime: nextIO.cpuTime,
+            backInReadyQueue:
+              state.currentSecond + nextIO.ioTime * state.quantumTime,
+          });
+        }),
+      checkIOProcess: () =>
+        set((state) => {
+          const processToUnqueue = [];
+          state.ioQueue.forEach((ioProccess) => {
+            if (ioProccess.unqueue) return;
+            if (ioProccess.backInReadyQueue > state.currentSecond) return;
+
+            processToUnqueue.push(ioProccess.key);
+            state.readyQueue.push({
+              key: v4(),
+              name: ioProccess.name,
+              unqueue: false,
+              quantumLeft: ioProccess.cpuTime,
+            });
+          });
+
+          state.ioQueue = state.ioQueue.map((process) =>
+            processToUnqueue.includes(process.key)
+              ? { ...process, unqueue: true }
+              : process
+          );
+        }),
     },
   }))
 );

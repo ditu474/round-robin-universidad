@@ -5,10 +5,13 @@ import GanttList from "./GanttList";
 import useRRData from "../../hooks/useRRData";
 import useListenForNewProccess from "../../hooks/useListenForNewProccess";
 import useListenForGantt from "../../hooks/useListenForGantt";
+import useListenForIO from "../../hooks/useListenForIO";
+import IOQueue from "./IOQueue";
 
 const RoundRobin = () => {
   useListenForNewProccess();
   useListenForGantt();
+  useListenForIO();
   const currentSecond = useRRData((state) => state.currentSecond);
 
   return (
@@ -34,6 +37,7 @@ const RoundRobin = () => {
         Segundos transcurridos: {currentSecond}
       </Typography>
       <ReadyQueue />
+      <IOQueue />
       <GanttList />
     </Box>
   );

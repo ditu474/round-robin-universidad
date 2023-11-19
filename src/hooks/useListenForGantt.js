@@ -26,7 +26,7 @@ const useListenForGantt = () => {
             quantumLeft: nextQuantumLeft,
           });
         } else {
-          // TODO: Agregar a la cola de IO si tiene procesos de IO
+          actions.addIOProcess(lastProcessInCpu.name);
         }
 
         return;

@@ -25,17 +25,22 @@ const BoxStyle = styled(Box, {
   padding: theme.spacing(1),
 }));
 
-const ReadyQueue = () => {
-  const readyQueue = useRRData((state) => state.readyQueue);
+const IOQueue = () => {
+  const ioQueue = useRRData((state) => state.ioQueue);
 
   return (
     <Box>
-      <Typography variant="h6">Cola de listos</Typography>
+      <Typography variant="h6">Procesos en E/S</Typography>
       <RootStyle>
-        {readyQueue.map((process) => (
+        {ioQueue.map((process) => (
           <BoxParentStyle key={process.key}>
             <BoxStyle unqueue={process.unqueue}>{process.name}</BoxStyle>
-            {process.quantumLeft}
+            <Typography variant="caption">
+              Tiempo de E/S: {process.ioTime}
+            </Typography>
+            <Typography variant="caption">
+              Vuelve a los: {process.backInReadyQueue}seg
+            </Typography>
           </BoxParentStyle>
         ))}
       </RootStyle>
@@ -43,4 +48,4 @@ const ReadyQueue = () => {
   );
 };
 
-export default ReadyQueue;
+export default IOQueue;
