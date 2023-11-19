@@ -7,6 +7,7 @@ const initialData = {
   quantumTime: 0,
   exchangeTime: 0,
   currentSecond: 0,
+  end: false,
   readyQueue: [],
   ioQueue: [],
   ganttList: [],
@@ -96,6 +97,7 @@ const useRRData = create(
         set((state) => {
           const process = state.processes[processName];
           const nextIO = process.ioInfo.shift();
+          state.processes[processName].end = true;
           if (!nextIO) return;
 
           state.ioQueue.push({
@@ -129,6 +131,15 @@ const useRRData = create(
               ? { ...process, unqueue: true }
               : process
           );
+        }),
+      checkEndProgram: () =>
+        set((state) => {
+          const totalProcesses = Object.keys(state.processes).length;
+          const endedProcess = Object.keys(state.processes).filter(
+            (name) => state.processes[name].end
+          ).length;
+
+          state.end = totalProcesses === endedProcess;
         }),
     },
   }))

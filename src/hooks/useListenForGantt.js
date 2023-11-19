@@ -8,8 +8,11 @@ const useListenForGantt = () => {
   const ganttList = useRRData((state) => state.ganttList);
   const currentSecond = useRRData((state) => state.currentSecond);
   const actions = useRRData((state) => state.actions);
+  const end = useRRData((state) => state.end);
 
   useEffect(() => {
+    if (end) return;
+
     const interval = setInterval(() => {
       const lastProcessInCpu = ganttList.findLast((e) => e);
       if (
@@ -44,7 +47,7 @@ const useListenForGantt = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [currentSecond, readyQueue, ganttList, actions]);
+  }, [currentSecond, readyQueue, ganttList, actions, end]);
 };
 
 export default useListenForGantt;

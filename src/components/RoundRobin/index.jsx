@@ -1,18 +1,23 @@
+import { useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 
 import ReadyQueue from "./ReadyQueue";
 import GanttList from "./GanttList";
 import useRRData from "../../hooks/useRRData";
-import useListenForNewProccess from "../../hooks/useListenForNewProccess";
 import useListenForGantt from "../../hooks/useListenForGantt";
-import useListenForIO from "../../hooks/useListenForIO";
 import IOQueue from "./IOQueue";
 
 const RoundRobin = () => {
-  useListenForNewProccess();
   useListenForGantt();
-  useListenForIO();
   const currentSecond = useRRData((state) => state.currentSecond);
+  const actions = useRRData((state) => state.actions);
+
+  useEffect(() => {
+    actions.checkInitialProcesses();
+    actions.checkIOProcess();
+    actions.checkEndProgram();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSecond]);
 
   return (
     <Box>
